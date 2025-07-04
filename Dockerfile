@@ -1,10 +1,10 @@
-FROM alpine
+FROM debian:bullseye-slim
 
 ARG ARCH
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.18/main" > /etc/apk/repositories && \
-    apk update && \
-    apk add --no-cache curl bash sqlite
+RUN apt update && \
+    apt install -y curl bash sqlite3 ca-certificates && \
+    apt clean
 
 ENV TZ Asia/Shanghai
 
@@ -13,7 +13,7 @@ COPY ./frp-panel-${ARCH} /app/frp-panel
 COPY ./etc /app/etc
 
 RUN ln -sf /app/etc/Shanghai /etc/localtime && \
-    mv /app/etc/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt && \
+    cp /app/etc/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt && \
     mkdir -p /data
 
 EXPOSE 9000
